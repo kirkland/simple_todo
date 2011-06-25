@@ -3,19 +3,36 @@
 require 'bundler/setup'
 Bundler.require
 
-opts = Trollop::options do
+COMMANDS=['list', 'add']
+
+# global options
+global_opts = Trollop::options do
+  banner <<-EOM
+
+Usage: ./run.rb [options] command (list or add)
+
+EOM
   opt :database, "Specify Task Database", :default => "#{ENV['HOME']}/.simple_todo.sqlite3"
-  opt :resetdb, "Clear out old database. Be careful!", :default => false
-  opt :action, "Action", :default => 'list'
+  opt :resetdb, "Delete old database. Be careful!", :default => false
 end
 
-#puts opts.inspect
+cmd = ARGV.shift
+cmd_opts = case cmd
+  when 'list' # parse list options
+    # when we need it, add another Trollop::options block here
+  when 'add' # parse add options
+  else
+    Trollop::die "unknown subcommand #{cmd.inspect}"
+  end
+
+#puts "global_opts: #{global_opts.inspect}"
+#puts "cmd_opts: #{cmd_opts.inspect}"
 
 # maybe delete db first
-File.delete(opts[:database]) if opts[:resetdb] && File.exist?(opts[:database])
+File.delete(global_opts[:database]) if global_opts[:resetdb] && File.exist?(global_opts[:database])
 
-SQLite3::Database.new(opts[:database])
-ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => opts[:database])
+SQLite3::Database.new(global_opts[:database])
+ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => global_opts[:database])
 
 # define schema
 # id column gets set up automatically
@@ -34,6 +51,10 @@ require 'task'
 # assume if this one table doesn't exist, need to make all tables
 initialize_database if !Task.table_exists?
 
-if opts[:action] == "list"
-  Task.print_all
-end
+case cmd
+  when 'list'
+    Task.print_all
+  when 'add'
+    puts "to be implemented..."
+  else
+  end
