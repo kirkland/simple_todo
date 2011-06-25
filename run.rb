@@ -55,6 +55,9 @@ case cmd
   when 'list'
     Task.print_all
   when 'add'
-    puts "to be implemented..."
-  else
+    if t = Task.create(:content => ARGV.join(" "))
+      puts "new task created: #{t.inspect}"
+    else
+      puts "error saving task: #{t.inspect}"
+    end
   end
