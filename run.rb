@@ -12,6 +12,7 @@ global_opts = Trollop::options do
 Usage: ./run.rb [options] command (list or add)
 
 EOM
+
   opt :database, "Specify Task Database", :default => "#{ENV['HOME']}/.simple_todo.sqlite3"
   opt :resetdb, "Delete old database. Be careful!", :default => false
 end
@@ -21,6 +22,9 @@ cmd_opts = case cmd
   when 'list' # parse list options
     # when we need it, add another Trollop::options block here
   when 'add' # parse add options
+  when 'comp', 'complete'
+  when nil
+    puts "Try a command, like 'list'"
   else
     Trollop::die "unknown subcommand #{cmd.inspect}"
   end
@@ -53,11 +57,23 @@ initialize_database if !Task.table_exists?
 
 case cmd
   when 'list'
-    Task.print_all
+    Task.print_all_incomplete
   when 'add'
     if t = Task.create(:content => ARGV.join(" "))
       puts "new task created: #{t.inspect}"
     else
       puts "error saving task: #{t.inspect}"
+    end
+  when 'complete', 'comp'
+    id = ARGV.shift.to_i
+    t = Task.find(id)
+    if t.nil?
+      puts "no task with id #{id}"
+    else
+      if t.complete!
+        puts "task completed: #{t.inspect}"
+      else
+        puts "error completing task: #{t.inspect}"
+      end
     end
   end
