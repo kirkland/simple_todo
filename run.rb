@@ -21,11 +21,11 @@ end
 # maybe delete db first
 File.delete(global_opts[:database]) if global_opts[:resetdb] && File.exist?(global_opts[:database])
 
+# get db
 SQLite3::Database.new(global_opts[:database])
 ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => global_opts[:database])
 
-# define schema
-# id column gets set up automatically
+# define schema (id column gets set up automatically)
 def initialize_database
   ActiveRecord::Base.connection.create_table(:tasks) do |t|
     t.column :content, :string, :limit => 256
