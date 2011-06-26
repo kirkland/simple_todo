@@ -4,7 +4,10 @@ class Task < ActiveRecord::Base
   end
 
   def print
-    puts "#{id}: #{content}"
+    id_space = Task.order('id DESC').limit(1).first.id.to_s.length
+    print_id = id.to_s.rjust(id_space)
+
+    puts "#{print_id}: #{content}"
   end
 
   class << self
