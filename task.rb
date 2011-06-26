@@ -3,16 +3,20 @@ class Task < ActiveRecord::Base
     update_attribute(:status, 'complete')
   end
 
+  def print
+    puts "#{id}: #{content}"
+  end
+
   class << self
     def print_all
       Task.all.each do |t|
-        puts "#{t.id}: #{t.content}"
+        t.print
       end
     end
 
     def print_all_incomplete
       Task.incomplete.each do |t|
-        puts "#{t.id}: #{t.content}"
+        t.print
       end
     end
 
