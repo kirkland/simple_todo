@@ -17,21 +17,6 @@ EOM
   opt :resetdb, "Delete old database. Be careful!", :default => false
 end
 
-cmd = ARGV.shift
-cmd_opts = case cmd
-  when 'list' # parse list options
-    # when we need it, add another Trollop::options block here
-  when 'add' # parse add options
-  when 'comp', 'complete'
-  when nil
-    puts "Try a command, like 'list'"
-  else
-    Trollop::die "unknown subcommand #{cmd.inspect}"
-  end
-
-#puts "global_opts: #{global_opts.inspect}"
-#puts "cmd_opts: #{cmd_opts.inspect}"
-
 # maybe delete db first
 File.delete(global_opts[:database]) if global_opts[:resetdb] && File.exist?(global_opts[:database])
 
@@ -54,6 +39,17 @@ require 'task'
 
 # assume if this one table doesn't exist, need to make all tables
 initialize_database if !Task.table_exists?
+
+cmd = ARGV.shift
+cmd_opts = case cmd
+  when 'list' # parse list options
+    # when we need it, add another Trollop::options block here
+  when 'add' # parse add options
+  when 'comp', 'complete'
+  else
+    # default command
+    cmd = 'list'
+  end
 
 case cmd
   when 'list'
