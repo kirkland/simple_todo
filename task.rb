@@ -3,6 +3,10 @@ class Task < ActiveRecord::Base
     update_attribute(:status, 'complete')
   end
 
+  def uncomplete!
+    update_attribute(:status, 'active')
+  end
+
   def print
     id_space = Task.order('id DESC').limit(1).first.id.to_s.length
     print_id = id.to_s.rjust(id_space)

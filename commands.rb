@@ -13,6 +13,8 @@ class Commands
           add
         when 'complete', 'c'
           complete
+        when 'uncomplete', 'u'
+          uncomplete
         end
     end
     
@@ -42,6 +44,20 @@ class Commands
           puts "task completed: #{t.inspect}"
         else
           puts "error completing task: #{t.inspect}"
+        end
+      end
+    end
+
+    def uncomplete
+      id = @rest.shift.to_i
+      t = Task.find(id)
+      if t.nil?
+        puts "no task with id #{id}"
+      else
+        if t.uncomplete!
+          puts "task uncompleted: #{t.inspect}"
+        else
+          puts "error uncompleting task: #{t.inspect}"
         end
       end
     end
