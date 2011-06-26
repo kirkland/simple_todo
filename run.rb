@@ -3,7 +3,7 @@
 require 'bundler/setup'
 Bundler.require
 
-COMMANDS=['list', 'add']
+COMMANDS=['list', 'l', 'add', 'a', 'complete', 'c']
 
 # global options
 global_opts = Trollop::options do
@@ -41,44 +41,14 @@ require 'task'
 # assume if this one table doesn't exist, need to make all tables
 initialize_database if !Task.table_exists?
 
-
-
-
-
 cmd = ARGV.shift
 cmd ||= 'list' # default command
 cmd_opts = case cmd
-  when 'list' # parse list options
+  when 'list', 'l' # parse list options
     Trollop::options do
       opt :all, "See all tasks, including completed ones", :default => false
     end
-  when 'add' # parse add options
-  when 'comp', 'complete'
   end
 
-case cmd
-  when 'list'
-    if cmd_opts[:all]
-      Task.print_all
-    else
-      Task.print_all_incomplete
-    end
-  when 'add'
-    if t = Task.create(:content => ARGV.join(" "))
-      puts "new task created: #{t.inspect}"
-    else
-      puts "error saving task: #{t.inspect}"
-    end
-  when 'complete', 'comp'
-    id = ARGV.shift.to_i
-    t = Task.find(id)
-    if t.nil?
-      puts "no task with id #{id}"
-    else
-      if t.complete!
-        puts "task completed: #{t.inspect}"
-      else
-        puts "error completing task: #{t.inspect}"
-      end
-    end
-  end
+require 'commands'
+Commands.process(global_opts, cmd_opts, cmd, ARGV)
