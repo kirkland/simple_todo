@@ -15,6 +15,7 @@ EOM
 
   opt :database, "Specify Task Database", :default => "#{ENV['HOME']}/.simple_todo.sqlite3"
   opt :resetdb, "Delete old database. Be careful!", :default => false
+  stop_on COMMANDS
 end
 
 # maybe delete db first
@@ -40,20 +41,28 @@ require 'task'
 # assume if this one table doesn't exist, need to make all tables
 initialize_database if !Task.table_exists?
 
+
+
+
+
 cmd = ARGV.shift
+cmd ||= 'list' # default command
 cmd_opts = case cmd
   when 'list' # parse list options
-    # when we need it, add another Trollop::options block here
+    Trollop::options do
+      opt :all, "See all tasks, including completed ones", :default => false
+    end
   when 'add' # parse add options
   when 'comp', 'complete'
-  else
-    # default command
-    cmd = 'list'
   end
 
 case cmd
   when 'list'
-    Task.print_all_incomplete
+    if cmd_opts[:all]
+      Task.print_all
+    else
+      Task.print_all_incomplete
+    end
   when 'add'
     if t = Task.create(:content => ARGV.join(" "))
       puts "new task created: #{t.inspect}"
