@@ -28,9 +28,9 @@ class Commands
     
     def add
       if t = Task.create(:content => @rest.join(' '))
-        puts "new task created: #{t.inspect}"
+        puts "new task created: #{t.content}"
       else
-        puts "error saving task: #{t.inspect}"
+        puts "error saving task: #{t.content}"
       end
     end
 
@@ -41,9 +41,9 @@ class Commands
         puts "no task with id #{id}"
       else
         if t.complete!
-          puts "task completed: #{t.inspect}"
+          puts "task completed: #{t.content}"
         else
-          puts "error completing task: #{t.inspect}"
+          puts "error completing task: #{t.content}"
         end
       end
     end
@@ -55,9 +55,9 @@ class Commands
         puts "no task with id #{id}"
       else
         if t.uncomplete!
-          puts "task uncompleted: #{t.inspect}"
+          puts "task uncompleted: #{t.content}"
         else
-          puts "error uncompleting task: #{t.inspect}"
+          puts "error uncompleting task: #{t.content}"
         end
       end
     end
